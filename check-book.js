@@ -43,7 +43,7 @@ library.using(
 
       rows.push(blankRow())
 
-      rows.unshift(element("h1", "Out:"))
+      rows.unshift(element("h1", "Pending"))
 
       return rows
     }
@@ -53,7 +53,7 @@ library.using(
 
       rows.push(blankRow())
 
-      rows.unshift(element("h1", "Paid:"))
+      rows.unshift(element("h1", "Paid"))
 
       return rows
         
