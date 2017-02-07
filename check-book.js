@@ -15,7 +15,7 @@ library.using(
 
       basicStyles.addTo(bridge)
 
-      bridge.addToHead(element.stylesheet(cellStyle, emptyCell, cellOnMobile, lastCellOnMobile, emptyCellComputed, emptyLastCell, computedStyle, rowStyle, firstRowStyle))
+      bridge.addToHead(element.stylesheet(cellStyle, emptyCell, cellOnMobile, lastCellOnMobile, emptyCellComputed, emptyLastCell, computedStyle, rowStyle, firstRowStyle, negativeStyle))
 
       bridge.addToHead("<title>Check book</title>")
       
@@ -71,7 +71,7 @@ library.using(
 
       var row = element(".row", [
         label(description),
-        input("$"+toDollarString(amount)),
+        input(toDollarString(amount), amount > 0),
       ])
 
       if (ledgerDate) {
@@ -82,7 +82,7 @@ library.using(
 
       account.balance += amount
 
-      var computedBalance = element(".text-input.computed", "$"+toDollarString(account.balance))
+      var computedBalance = element(".text-input.computed", toDollarString(account.balance))
 
       row.addChild(computedBalance)
 
@@ -104,6 +104,11 @@ library.using(
 
     function toDollarString(cents) {
 
+      if (cents < 0) {
+        var negative = true
+        cents = Math.abs(cents)
+      }
+
       cents = Math.ceil(cents)
 
       var dollars = Math.floor(cents / 100)
@@ -112,7 +117,13 @@ library.using(
         remainder = "0"+remainder
       }
 
-      return dollars+"."+remainder
+      var string = "$"+dollars+"."+remainder
+
+      if (negative) {
+        string = "-"+string
+      }
+
+      return string
     }
 
     var rowStyle = element.style(".row", {"margin-top": "0.5em"})
@@ -171,9 +182,15 @@ library.using(
       })
     )
 
+    var negativeStyle = element.style(".credit", {"color": "#66ef51"})
 
-    function input(text) {
-      return element(".text-input", text||"")
+
+    function input(text, positive) {
+      var el = element(".text-input", text||"")
+      if (positive) {
+        el.addSelector(".credit")
+      }
+      return el
     }
 
     function label(text) {
