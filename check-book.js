@@ -13,22 +13,22 @@ library.using(
 
     function checkbook(bridge) {
 
-      var balance = 0
-
       basicStyles.addTo(bridge)
 
-      bridge.addToHead(element.stylesheet(cellStyle, emptyCell, cellOnMobile, lastCellOnMobile, emptyCellComputed, emptyLastCell, computedStyle, rowStyle))
+      bridge.addToHead(element.stylesheet(cellStyle, emptyCell, cellOnMobile, lastCellOnMobile, emptyCellComputed, emptyLastCell, computedStyle, rowStyle, firstRowStyle))
 
       bridge.addToHead("<title>Check book</title>")
       
+      var erik = {balance: 0}
+
       var page = [
-        paid([
+        paid(erik, [
           ["USAA balance", "$669.29", "2/3/2017"],
           ["Square", "$1,611.00", "2/4/2017"],
           ["Feburary rent", "-$2,085.00", "2/6/2017"],
           ["Mom", "$100.00", "2/6/2017"],
         ]),
-        out([
+        out(erik, [
           ["Testing administration", "$1,250.00"],
           ["Wes", "$290.00"],
         ]),
@@ -38,8 +38,8 @@ library.using(
 
     }
 
-    function out(array) {
-      var rows = array.map(renderRow)
+    function out(account, array) {
+      var rows = array.map(renderRow.bind(null, account))
 
       rows.push(blankRow())
 
@@ -48,8 +48,8 @@ library.using(
       return rows
     }
 
-    function paid(array) {
-      var rows = array.map(renderRow)
+    function paid(account, array) {
+      var rows = array.map(renderRow.bind(null, account))
 
       rows.push(blankRow())
 
@@ -59,9 +59,7 @@ library.using(
         
     }
 
-    var balance = 0
-
-    function renderRow(entry) {
+    function renderRow(account, entry) {
       var description = entry[0]
       var amount = entry[1]
       var ledgerDate = entry[2]
@@ -77,9 +75,9 @@ library.using(
         row.addChild(empty(input()))
       }
 
-      balance += parseMoney(amount)
+      account.balance += parseMoney(amount)
 
-      var computedBalance = element(".text-input.computed", "$"+toDollarString(balance))
+      var computedBalance = element(".text-input.computed", "$"+toDollarString(account.balance))
 
       row.addChild(computedBalance)
 
@@ -111,6 +109,8 @@ library.using(
 
     var rowStyle = element.style(".row", {"margin-top": "0.5em"})
 
+    var firstRowStyle = element.style(".row:first-of-type", {"margin-top": "-9px"}) // same as .text-input padding-top
+
     var computedStyle = element.style(".computed.text-input", {
       "color": "#7bbaf5",
     })
@@ -118,8 +118,7 @@ library.using(
     var cellStyle = element.style(".text-input", {
       "display": "inline-block",
       "width": "5em",
-      "margin-bottom": "10px",
-      "min-height": "1em",
+      "margin": "0",
       "border-bottom-color": "#aeecf3",
     })
 
