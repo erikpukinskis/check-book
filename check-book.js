@@ -59,21 +59,54 @@ library.using(
         
     }
 
+    var balance = 0
+
     function renderRow(entry) {
+      var description = entry[0]
+      var amount = entry[1]
+      var ledgerDate = entry[2]
+
       var row = element(".row", [
-        label(entry[0]),
-        input(entry[1]),
+        label(description),
+        input(amount),
       ])
 
-      if (entry[2]) {
-        row.addChild(input(entry[2]))
+      if (ledgerDate) {
+        row.addChild(input(ledgerDate))
       } else {
         row.addChild(empty(input()))
       }
 
-      row.addChild(element(".text-input.computed", "$XXX.XX"))
+      balance += parseMoney(amount)
+
+      var computedBalance = element(".text-input.computed", "$"+toDollarString(balance))
+
+      row.addChild(computedBalance)
 
       return row
+    }
+
+    function parseMoney(string) {
+      var trimmed = string.replace(/[^0-9.-]*/g, "")
+      var amount = parseFloat(trimmed)
+      var dollars = Math.floor(amount)
+      var remainder = amount - dollars
+      var cents = Math.floor(remainder*100)
+
+      return dollars*100 + cents
+    }
+
+    function toDollarString(cents) {
+
+      cents = Math.ceil(cents)
+
+      var dollars = Math.floor(cents / 100)
+      var remainder = cents - dollars*100
+      if (remainder < 10) {
+        remainder = "0"+remainder
+      }
+
+      return dollars+"."+remainder
     }
 
     var rowStyle = element.style(".row", {"margin-top": "0.5em"})
