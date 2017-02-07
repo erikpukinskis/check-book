@@ -9,6 +9,9 @@
     "web-element": "*",
     "basic-styles": "*"
   },
+  "scripts": {
+    "start": "PORT=3005 node check-book"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/erikpukinskis/check-book.git"

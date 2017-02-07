@@ -15,7 +15,7 @@ library.using(
 
       basicStyles.addTo(bridge)
 
-      bridge.addToHead(element.stylesheet(cellStyle, emptyCell, cellOnMobile, lastCellOnMobile, emptyCellComputed, emptyLastCell, computedStyle, rowStyle, firstRowStyle, negativeStyle))
+      bridge.addToHead(element.stylesheet(cellStyle, emptyCell, cellOnMobile, lastCellOnMobile, emptyCellComputed, emptyLastCell, computedStyle, negativeStyle))
 
       bridge.addToHead("<title>Check book</title>")
       
@@ -126,10 +126,6 @@ library.using(
       return string
     }
 
-    var rowStyle = element.style(".row", {"margin-top": "0.5em"})
-
-    var firstRowStyle = element.style(".row:first-of-type", {"margin-top": "-9px"}) // same as .text-input padding-top
-
     var computedStyle = element.style(".computed.text-input", {
       "color": "#7bbaf5",
     })
@@ -137,7 +133,6 @@ library.using(
     var cellStyle = element.style(".text-input", {
       "display": "inline-block",
       "width": "5em",
-      "margin": "0",
       "border-bottom-color": "#aeecf3",
     })
 
