@@ -22,15 +22,20 @@ library.using(
       var erik = {balance: 0}
 
       var page = [
-        paid(erik, [
+        paid(erik, "January paid", [
           ["USAA balance", "$669.29", "2/3/2017"],
           ["Square", "$1,611.00", "2/4/2017"],
           ["Feburary rent", "-$2,085.00", "2/6/2017"],
           ["Mom", "$100.00", "2/6/2017"],
+          ["Teensy house gutter", "-7.63", "2/7/2017"],
+          // ["Clipper", "-20", "2/6/2017"],
+          ["Sandwich & Coffee", "-17.18", "2/6/2017"],
+          ["Lyft to Marie", "-9.29", "2/6/2016"],
+          ["Lyft to Marie", "-8.75", "1/31/2017"],
+          ["Wes", "$291.61", "2/7/2017"],
         ]),
         out(erik, [
           ["Testing administration", "$1,250.00"],
-          ["Wes", "$290.00"],
         ]),
       ]
 
@@ -48,12 +53,12 @@ library.using(
       return rows
     }
 
-    function paid(account, array) {
+    function paid(account, label, array) {
       var rows = array.map(renderRow.bind(null, account))
 
       rows.push(blankRow())
 
-      rows.unshift(element("h1", "Paid"))
+      rows.unshift(element("h1", label))
 
       return rows
         
@@ -61,12 +66,12 @@ library.using(
 
     function renderRow(account, entry) {
       var description = entry[0]
-      var amount = entry[1]
+      var amount = parseMoney(entry[1])
       var ledgerDate = entry[2]
 
       var row = element(".row", [
         label(description),
-        input(amount),
+        input("$"+toDollarString(amount)),
       ])
 
       if (ledgerDate) {
@@ -75,7 +80,7 @@ library.using(
         row.addChild(empty(input()))
       }
 
-      account.balance += parseMoney(amount)
+      account.balance += amount
 
       var computedBalance = element(".text-input.computed", "$"+toDollarString(account.balance))
 
@@ -85,6 +90,9 @@ library.using(
     }
 
     function parseMoney(string) {
+      if (typeof string != "string") {
+        throw new Error("Expected "+string+" to be a string representing money")
+      }
       var trimmed = string.replace(/[^0-9.-]*/g, "")
       var amount = parseFloat(trimmed)
       var dollars = Math.floor(amount)
