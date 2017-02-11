@@ -1,6 +1,6 @@
 {
   "name": "check-book",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A tool for making the money stuff go away",
   "main": "check-book.js",
   "dependencies": {
