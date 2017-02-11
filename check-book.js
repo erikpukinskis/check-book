@@ -1,17 +1,11 @@
 var library = require("module-library")(require)
 
-library.using(
+module.exports = library.export(
+  "check-book",
   ["web-host", "web-element", "basic-styles"],
   function(host, element, basicStyles) {
 
-
-    host.onRequest(function(getPartial) {
-      var bridge = getPartial()
-      checkbook(bridge)
-    })
-
-
-    function checkbook(bridge) {
+    function checkBook(bridge, ledger) {
 
       basicStyles.addTo(bridge)
 
@@ -19,25 +13,9 @@ library.using(
 
       bridge.addToHead("<title>Check book</title>")
       
-      var erik = {balance: 0}
+      var page = element()
 
-      var page = [
-        paid(erik, "January paid", [
-          ["USAA balance", "$669.29", "2/3/2017"],
-          ["Square", "$1,611.00", "2/4/2017"],
-          ["Feburary rent", "-$2,085.00", "2/6/2017"],
-          ["Mom", "$100.00", "2/6/2017"],
-          ["Teensy house gutter", "-7.63", "2/7/2017"],
-          // ["Clipper", "-20", "2/6/2017"],
-          ["Sandwich & Coffee", "-17.18", "2/6/2017"],
-          ["Lyft to Marie", "-9.29", "2/6/2016"],
-          ["Lyft to Marie", "-8.75", "1/31/2017"],
-          ["Wes", "$291.61", "2/7/2017"],
-        ]),
-        out(erik, [
-          ["Testing administration", "$1,250.00"],
-        ]),
-      ]
+      ledger.call(null, paid.bind(page), out.bind(page))
 
       bridge.send(page)
 
@@ -50,7 +28,7 @@ library.using(
 
       rows.unshift(element("h1", "Pending"))
 
-      return rows
+      this.addChild(rows)
     }
 
     function paid(account, label, array) {
@@ -60,7 +38,7 @@ library.using(
 
       rows.unshift(element("h1", label))
 
-      return rows
+      this.addChild(rows)
         
     }
 
@@ -213,5 +191,6 @@ library.using(
       return el
     }
 
+    return checkBook
   }
 )
