@@ -115,10 +115,10 @@ module.exports = library.export(
     })
 
     var lastCellOnMobile = element.template(
-      ".text-input:last-of-type",
+      ".row",
       element.style({
         "@media (max-width: 600px)": {
-          "border-bottom-color": "#555",
+          "border-bottom": "2px dotted #ccc",
         }
       })
     )
@@ -127,6 +127,7 @@ module.exports = library.export(
       ".text-input",
       element.style({
         "@media (max-width: 600px)": {
+          "margin-top": "0",
           "border-bottom-color": "transparent",
         }
       })
