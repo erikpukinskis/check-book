@@ -2,50 +2,58 @@ var library = require("module-library")(require)
 
 module.exports = library.export(
   "check-book",
-  ["web-host", "web-element", "basic-styles"],
-  function(host, element, basicStyles) {
+  ["web-element", "basic-styles"],
+  function(element, basicStyles) {
 
-    function checkBook(bridge, ledger) {
+
+    function checkBook(account, label) {
+
+      var page = account.page = element()
+      account.bridge = bridge
+      account.paid = paid.bind(account)
+      account.out = out.bind(account)
+      account.sendTo = sendPage.bind(account)
+      account.ledger = []
+      account.upcoming = []
+      account.label = label
+
+      return account
+    }
+
+    function sendPage(bridge) {
+      prepareBridge(bridge)
+
+      var page = [
+        element("h1", this.label),
+        this.ledger,
+        element("h1", "Out"),
+        this.upcoming,
+      ]
+
+      bridge.send(page)
+    }
+
+    function prepareBridge(bridge) {
+      if (bridge.remember("check-book")) { return }
 
       basicStyles.addTo(bridge)
 
       bridge.addToHead(element.stylesheet(cellStyle, emptyCell, cellOnMobile, lastCellOnMobile, emptyCellComputed, emptyLastCell, computedStyle, negativeStyle))
 
       bridge.addToHead("<title>Check book</title>")
-      
-      var page = element()
 
-      ledger.call(null, paid.bind(page), out.bind(page))
-
-      bridge.send(page)
-
+      bridge.see("check-book")
     }
 
-    function out(account, array) {
-      var rows = array.map(renderRow.bind(null, account))
-
-      rows.push(blankRow())
-
-      rows.unshift(element("h1", "Pending"))
-
-      this.addChild(rows)
+    function out(description, amount) {
+      this.upcoming.push(renderRow.call(this, description, amount))
     }
 
-    function paid(account, label, array) {
-      var rows = array.map(renderRow.bind(null, account))
-
-      rows.push(blankRow())
-
-      rows.unshift(element("h1", label))
-
-      this.addChild(rows)
-        
+    function paid(description, amount, ledgerDate) {
+      this.ledger.push(renderRow.call(this, description, amount, ledgerDate))
     }
 
-    function renderRow(account, entry) {
-      var description = entry[0]
-      var amount = parseMoney(entry[1])
-      var ledgerDate = entry[2]
+    function renderRow(description, amount, ledgerDate) {
 
       var row = element(".row", [
         label(description),
@@ -58,9 +66,9 @@ module.exports = library.export(
         row.addChild(empty(input()))
       }
 
-      account.balance += amount
+      this.balance += amount
 
-      var computedBalance = element(".text-input.computed", toDollarString(account.balance))
+      var computedBalance = element(".text-input.computed", toDollarString(this.balance))
 
       row.addChild(computedBalance)
 

@@ -7,10 +7,11 @@
     "module-library": "*",
     "web-host": "*",
     "web-element": "*",
-    "basic-styles": "*"
+    "basic-styles": "*",
+    "render-module": "*"
   },
   "scripts": {
-    "start": "PORT=3005 node check-book"
+    "start": "PORT=3005 node start"
   },
   "repository": {
     "type": "git",
