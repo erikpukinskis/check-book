@@ -6,31 +6,8 @@ module.exports = library.export(
   function(element, basicStyles) {
 
 
-    function checkBook(account, label) {
-
-      var page = account.page = element()
-      account.bridge = bridge
-      account.paid = paid.bind(account)
-      account.out = out.bind(account)
-      account.sendTo = sendPage.bind(account)
-      account.ledger = []
-      account.upcoming = []
-      account.label = label
-
-      return account
-    }
-
-    function sendPage(bridge) {
-      prepareBridge(bridge)
-
-      var page = [
-        element("h1", this.label),
-        this.ledger,
-        element("h1", "Out"),
-        this.upcoming,
-      ]
-
-      bridge.send(page)
+    function checkBook(label, balance) {
+      return new Account(label, 0)
     }
 
     function prepareBridge(bridge) {
@@ -45,35 +22,63 @@ module.exports = library.export(
       bridge.see("check-book")
     }
 
-    function out(description, amount) {
-      this.upcoming.push(renderRow.call(this, description, amount))
+    function Account(label, balance) {
+      this.label = label
+      this.balance = balance
+      this.ledger = []
+      this.upcoming = []
     }
 
-    function paid(description, amount, ledgerDate) {
-      this.ledger.push(renderRow.call(this, description, amount, ledgerDate))
-    }
-
-    function renderRow(description, amount, ledgerDate) {
-
-      var row = element(".row", [
-        label(description),
-        input(toDollarString(amount), amount > 0),
-      ])
-
-      if (ledgerDate) {
-        row.addChild(input(ledgerDate))
-      } else {
-        row.addChild(empty(input()))
+    Account.prototype.paid = 
+      function(description, amount, ledgerDate) {
+        this.ledger.push(this.renderRow(description, amount, ledgerDate))
       }
 
-      this.balance += amount
+    Account.prototype.out = 
+      function(description, amount) {
+        this.upcoming.push(this.renderRow(description, amount))
+      }
 
-      var computedBalance = element(".text-input.computed", toDollarString(this.balance))
+    Account.prototype.sendTo =   
+      function(bridge) {
+        prepareBridge(bridge)
 
-      row.addChild(computedBalance)
+        var page = element([
+          element("h1", this.label),
+          this.ledger,
+          element("h1", "Out"),
+          this.upcoming,
+        ])
 
-      return row
-    }
+        page.appendStyles({"margin-bottom": "5em"})
+
+        bridge.send(page)
+      }
+
+    Account.prototype.renderRow =
+      function(description, amount, ledgerDate) {
+
+        amount = parseMoney(amount)
+
+        var row = element(".row", [
+          label(description),
+          input(toDollarString(amount), amount > 0),
+        ])
+
+        if (ledgerDate) {
+          row.addChild(input(ledgerDate))
+        } else {
+          row.addChild(empty(input()))
+        }
+
+        this.balance += amount
+
+        var computedBalance = element(".text-input.computed", toDollarString(this.balance))
+
+        row.addChild(computedBalance)
+
+        return row
+      }
 
     function parseMoney(string) {
       if (typeof string != "string") {
@@ -90,6 +95,12 @@ module.exports = library.export(
 
     function toDollarString(cents) {
 
+      if (!cents) {
+        throw new Error(cents+" is not pennies")
+      } else {
+        console.log("pennies:", cents)
+      }
+
       if (cents < 0) {
         var negative = true
         cents = Math.abs(cents)
@@ -104,6 +115,8 @@ module.exports = library.export(
       }
 
       var string = "$"+dollars+"."+remainder
+
+      console.log({cents: cents, dollars: dollars, remainder: remainder, negative: negative, string: string})
 
       if (negative) {
         string = "-"+string
