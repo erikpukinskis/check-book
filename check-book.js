@@ -1,9 +1,11 @@
 var library = require("module-library")(require)
 
+
+
 module.exports = library.export(
   "check-book",
-  ["web-element", "basic-styles"],
-  function(element, basicStyles) {
+  ["web-element", "basic-styles", "edit-source"],
+  function(element, basicStyles, editSource) {
 
 
     function checkBook(label, balance) {
@@ -43,7 +45,8 @@ module.exports = library.export(
       function(bridge) {
         prepareBridge(bridge)
 
-        var page = element([
+        var page = element(".check-book", [
+          editSource(bridge, ".check-book"),
           element("h1", this.label),
           this.ledger,
           element("h1", "Out"),
@@ -97,8 +100,6 @@ module.exports = library.export(
 
       if (!cents) {
         throw new Error(cents+" is not pennies")
-      } else {
-        console.log("pennies:", cents)
       }
 
       if (cents < 0) {

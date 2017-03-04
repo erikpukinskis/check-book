@@ -1,8 +1,8 @@
 var library = require("module-library")(require)
 
 module.exports = library.export(
-  "eriks-payment-log",
-  ["./check-book"],
+  "test-check-book",
+  ["check-book"],
   function(checkBook) {
     return function(bridge) {
       var erik = checkBook("January paid")

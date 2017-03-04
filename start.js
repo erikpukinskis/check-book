@@ -2,17 +2,17 @@ var library = require("module-library")(require)
 
 
 library.using(
-  ["web-host", "render-module", "./erik"],
-  function(host, renderModule, eriksCheckbook) {
+  ["web-host", "edit-source", "./test-check-book"],
+  function(host, editSource, testCheckBook) {
 
     host.onSite(function(site) {
-      renderModule.prepareSite(site)
+      editSource.prepareSite(site, library)
     })
 
     host.onRequest(function(getBridge) {
-      eriksCheckbook(getBridge())
-
-      renderModule(getBridge(), eriksCheckbook)
+      var bridge = getBridge()
+      editSource.prepareBridge(bridge)
+      testCheckBook(bridge)
     })
 
   }
