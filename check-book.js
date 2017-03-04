@@ -45,7 +45,7 @@ module.exports = library.export(
       function(bridge) {
         prepareBridge(bridge)
 
-        var page = element(".check-book", [
+        var page = element(".check-book", element.style({"display": "inline-block"}), [
           editSource(bridge, ".check-book"),
           element("h1", this.label),
           this.ledger,
