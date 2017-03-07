@@ -117,8 +117,6 @@ module.exports = library.export(
 
       var string = "$"+dollars+"."+remainder
 
-      console.log({cents: cents, dollars: dollars, remainder: remainder, negative: negative, string: string})
-
       if (negative) {
         string = "-"+string
       }

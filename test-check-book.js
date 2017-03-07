@@ -15,6 +15,7 @@ module.exports = library.export(
       erik.paid("Sandwich & Coffee", "-17.18", "2/6/2017")
       erik.paid("Lyft to Marie", "-9.29", "2/6/2016")
       erik.out("Landscaping", "$1250.00")
+      erik.paid("Marie", "-$100.00", "2/9/2017")
 
       erik.sendTo(bridge)
     }
